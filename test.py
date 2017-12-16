@@ -31,7 +31,7 @@ def convert_one_image( autoencoder, image ):
 output_dir = Path( 'output' )
 output_dir.mkdir( parents=True, exist_ok=True )
  
-for fn in images_A[0:7]
+for fn in images_A[0:7]:
     image = cv2.imread(fn)
     new_image = convert_one_image( autoencoder_B, image )
     output_file = output_dir / Path(fn).name
