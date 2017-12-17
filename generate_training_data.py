@@ -17,12 +17,6 @@ face_rec_model_path_fn = "dlib_face_recognition_resnet_model_v1.dat"
 
 # http://dlib.net/face_recognition.py.html
 def detect_faces(image):
-
-    # Create a face detector
-    face_detector = dlib.get_frontal_face_detector()
-    sp = dlib.shape_predictor(predictor_fn)
-    facerec = dlib.face_recognition_model_v1(face_rec_model_path_fn)
-
     # Ask the detector to find the bounding boxes of each face. The 1 in the
     # second argument indicates that we should upsample the image 1 time. This
     # will make everything bigger and allow us to detect more faces.
@@ -49,3 +43,14 @@ def main():
                 resized_face = cv2.resize(face, (256, 256))
                 output_file = output_dir / Path(filename).name
                 cv2.imwrite(str(output_file), resized_face)
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    args = parser.parse_args()
+
+    # Create a face detector
+    face_detector = dlib.get_frontal_face_detector()
+    sp = dlib.shape_predictor(predictor_fn)
+    facerec = dlib.face_recognition_model_v1(face_rec_model_path_fn)
+
+    main()
