@@ -1,7 +1,7 @@
-import dlib
-from PIL import Image
 import cv2
+import dlib
 from pathlib import Path
+from PIL import Image
 
 from utils import get_image_paths
 
@@ -31,20 +31,21 @@ def detect_faces(image):
     face_frames = [(x.left(), x.top(), x.right(), x.bottom()) for x in detected_faces]
     return face_frames
 
-# Load images filenames
-image_filenames = get_image_paths('raw_data/obama')
+def main():
+    # Load images filenames
+    image_filenames = get_image_paths('raw_data/obama')
 
-output_dir = Path('training_data/obama')
-output_dir.mkdir(parents=True, exist_ok=True)
+    output_dir = Path('training_data/obama')
+    output_dir.mkdir(parents=True, exist_ok=True)
 
-for filename in image_filenames:
-    print("Scanning: " + filename)
-    image = cv2.imread(filename)
-    detected_faces = detect_faces(image)
-    for n, face_rectangle in enumerate(detected_faces):
-        if len(detected_faces) == 1:
-            # Crop the face
-            face = image[face_rectangle[1]:face_rectangle[3], face_rectangle[0]:face_rectangle[2]]
-            resized_face = cv2.resize(face, (256, 256))
-            output_file = output_dir / Path(filename).name
-            cv2.imwrite(str(output_file), resized_face)
+    for filename in image_filenames:
+        print("Scanning: " + filename)
+        image = cv2.imread(filename)
+        detected_faces = detect_faces(image)
+        for n, face_rectangle in enumerate(detected_faces):
+            if len(detected_faces) == 1:
+                # Crop the face
+                face = image[face_rectangle[1]:face_rectangle[3], face_rectangle[0]:face_rectangle[2]]
+                resized_face = cv2.resize(face, (256, 256))
+                output_file = output_dir / Path(filename).name
+                cv2.imwrite(str(output_file), resized_face)
