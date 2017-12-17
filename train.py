@@ -21,12 +21,12 @@ def save_model_weights():
     decoder_B.save_weights( "models/decoder_B.h5" )
     print( "Saved model weights" )
 
-images_A = get_image_paths( "data/trump" )
-images_B = get_image_paths( "data/cage"  )
+images_A = get_image_paths( "training_data/trump" )
+images_B = get_image_paths( "training_data/cage"  )
 images_A = load_images( images_A ) / 255.0
 images_B = load_images( images_B ) / 255.0
 
-images_A += images_B.mean( axis=(0,1,2) ) - images_A.mean( axis=(0,1,2) )
+images_A += images_B.mean( axis=(0,1,2) ) - images_A.mean(axis=(0,1,2) )
 
 print( "Press 'q' to stop training and save model" )
 
@@ -37,10 +37,10 @@ for iteration in range(1000000):
 
     loss_A = autoencoder_A.train_on_batch( warped_A, target_A )
     loss_B = autoencoder_B.train_on_batch( warped_B, target_B )
-    print("Iteration %d", iteration)
-    print("autoencoder_A loss: %f | autoencoder_B loss: %f" (loss_A, loss_B ))
+    print("Iteration {}".format(iteration)
+    print("autoencoder_A loss: {} | autoencoder_B loss: {}".format(loss_A, loss_B))
 
-    if epoch % 100 == 0:
+    if iteration % 100 == 0:
         save_model_weights()
         test_A = target_A[0:14]
         test_B = target_B[0:14]
