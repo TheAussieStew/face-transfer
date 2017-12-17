@@ -12,8 +12,8 @@ encoder  .load_weights( "models/encoder.h5"   )
 decoder_A.load_weights( "models/decoder_A.h5" )
 decoder_B.load_weights( "models/decoder_B.h5" )
  
-images_A = get_image_paths( "data/trump" )
-images_B = get_image_paths( "data/cage" )
+images_A = get_image_paths( "training_data/trump" )
+images_B = get_image_paths( "training_data/cage" )
  
 def convert_one_image( autoencoder, image ):
     assert image.shape == (256,256,3)
