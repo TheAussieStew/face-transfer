@@ -64,10 +64,6 @@ def main():
                 #cv2.imwrite(str(output_file) + '{}.png'.format(frame_count), frame)
                 frame_count += 1
 
-                # Press Q on keyboard to stop recording
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                  break
-
     # When everything is complete, release the video capture and video write objects
     out.release()
     video.release()
