@@ -92,12 +92,13 @@ def processVideo(videoFile,FLAGS):
 			noseTipCenter = face_landmarks_list[0]["nose_bridge"][3]
 			leftEye  = face_landmarks_list[0]["left_eye"]			
 			rightEye = face_landmarks_list[0]["right_eye"]
-			faceWidth = 2 * max(distance.euclidean(leftEye[0],noseTipCenter),
+			faceWidth = 1.9 * max(distance.euclidean(leftEye[0],noseTipCenter),
 								  distance.euclidean(rightEye[0],noseTipCenter))
 						
 			(left,top)     = np.subtract(noseTipCenter , (faceWidth,faceWidth) )  
 			(right,bottom) = np.add(noseTipCenter , (faceWidth,faceWidth) )
-			left,top,right,bottom = int(left),int(top),int(right),int(bottom)
+			vertical_offset = 20
+			left,top,right,bottom = int(left),int(top + vertical_offset),int(right),int(bottom + vertical_offset)
 
 			cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 6)
 			cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
