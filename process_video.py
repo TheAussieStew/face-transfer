@@ -38,6 +38,16 @@ facial_features = [
 #faceLocations = face_recognition.face_locations(frame)
 #numFaces      = len(faceLocations)
 
+from test import convert_one_image
+
+from model import autoencoder_A
+from model import autoencoder_B
+from model import encoder, decoder_A, decoder_B
+
+encoder  .load_weights( "models/encoder.h5"   )
+decoder_A.load_weights( "models/decoder_A.h5" )
+decoder_B.load_weights( "models/decoder_B.h5" )
+
 def processVideo(videoFile,FLAGS):
 	videoCapture  = cv2.VideoCapture(videoFile)
 	isOpened      = videoCapture.isOpened()
@@ -82,7 +92,7 @@ def processVideo(videoFile,FLAGS):
 			noseTipCenter = face_landmarks_list[0]["nose_bridge"][3]
 			leftEye  = face_landmarks_list[0]["left_eye"]			
 			rightEye = face_landmarks_list[0]["right_eye"]
-			faceWidth = 1.5 * max(distance.euclidean(leftEye[0],noseTipCenter),
+			faceWidth = 2 * max(distance.euclidean(leftEye[0],noseTipCenter),
 								  distance.euclidean(rightEye[0],noseTipCenter))
 						
 			(left,top)     = np.subtract(noseTipCenter , (faceWidth,faceWidth) )  
@@ -95,16 +105,16 @@ def processVideo(videoFile,FLAGS):
 			face = frame[top:bottom, left:right]
 			# resize to CROP_SIZE whixh is 256 by 256
 			face = cv2.resize(face, CROP_SIZE)
-			#Downscale this cropped face to 0.5x original resolution
-			downScale = int((bottom - top) * CROP_RATIO)
-			faceDownscaled = cv2.resize(face, (downScale, downScale))
-			# upscale the face to put it back to the original frame
-			faceUpscaled = cv2.resize(faceDownscaled, (bottom - top,bottom - top))
-			# put upscaled blurry face to the original image
-			frame[top:bottom, left:right] = faceUpscaled
-			cv2.imshow('faceUpscaled',faceUpscaled)
+            # transform using autoencoder
+			new_face = convert_one_image(autoencoder_A, face)
+			# upscale the new face to put it back to the original frame
+			new_face = cv2.resize(new_face, (bottom - top,bottom - top))
+            # put new face onto the original image
+			frame[top:bottom, left:right] = new_face
 
-		cv2.imshow('image',frame)
+		#cv2.imshow('image',frame)
+		if frameCount % 10 == 0:
+			print("{} frames processed".format(frameCount))
 		cv2.waitKey(1)
 
 		if FLAGS.saveOutput:
