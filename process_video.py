@@ -1,92 +1,170 @@
-# Use like this:
-# python process_video.py [video_filename]
-
 import os
-import time
+import sys
 import cv2
-import dlib
 import argparse
-from pathlib import Path
+import time
+import glob
 
-from test import convert_one_image
+import face_recognition
+import numpy as np
+from scipy.spatial import distance
 
-from generate_training_data import detect_faces
+parser   = argparse.ArgumentParser()
 
-output_dir = Path('test_output_videos/obama')
-output_dir.mkdir(parents=True, exist_ok=True)
+parser.add_argument('--image', action='store_true' ,help='')
+parser.add_argument('--video', action='store_true' ,help='')
 
-from model import autoencoder_A
-from model import autoencoder_B
-from model import encoder, decoder_A, decoder_B
+parser.add_argument('--saveOutput' ,action='store_true' ,help='')
+parser.add_argument('--dir', type=str, default='',help='')
+parser.add_argument('--noDisplay', action='store_true' ,help='')
+parser.add_argument('--processingFps', type=int ,default = 1,help='')
+parser.add_argument('--outputDirectory', type=str, default='',help='')
 
-encoder  .load_weights( "models/encoder.h5"   )
-decoder_A.load_weights( "models/decoder_A.h5" )
-decoder_B.load_weights( "models/decoder_B.h5" )
+CROP_SIZE  = (256,256)
+CROP_RATIO = 0.5
 
-def main():
-    video = cv2.VideoCapture(args.filename)
+facial_features = [
+    'chin',
+    'left_eyebrow',
+    'right_eyebrow',
+    'nose_bridge',
+    'nose_tip',
+    'left_eye',
+    'right_eye',
+    'top_lip',
+    'bottom_lip'
+]
 
-    start_time = time.time()
+#faceLocations = face_recognition.face_locations(frame)
+#numFaces      = len(faceLocations)
 
-    # Default resolutions of the frame are obtained.The default resolutions are system dependent.
-    # We convert the resolutions from float to integer.
-    frame_width = int(video.get(3))
-    frame_height = int(video.get(4))
+def processVideo(videoFile,FLAGS):
+	videoCapture  = cv2.VideoCapture(videoFile)
+	isOpened      = videoCapture.isOpened()
 
-    out = cv2.VideoWriter('output_obama.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 30, (frame_width,frame_height))
-    
-    frame_count = 0
-    while video.isOpened():
-        ret, frame = video.read()
-        
-        face_rectangles = detect_faces(frame)
-        
-        # Only perform if there's one face detected
-        if len(face_rectangles) == 1:
-            for face_rectangle in face_rectangles:
-                print(face_rectangle)
-                # Crop the face
-                face = frame[face_rectangle[1]:face_rectangle[3],\
-                                face_rectangle[0]:face_rectangle[2]]
-                # Resize
-                resized_face = cv2.resize(face, (256, 256))
-                # Use the autoencoder to process the face
-                new_face = convert_one_image(autoencoder_A, resized_face)
-                # Resize to original shape
-                width = face_rectangle[2] - face_rectangle[0]
-                height = face_rectangle[3] - face_rectangle[1]
-                resized_new_face = cv2.resize(new_face, (width, height))
-                # Paste the new face back on the original frame
-                frame[face_rectangle[1]:face_rectangle[3],\
-                                face_rectangle[0]:face_rectangle[2]] = resized_new_face
-                output_file = output_dir / Path(args.filename).name
-                out.write(frame)
-                #cv2.imwrite(str(output_file) + '{}.png'.format(frame_count), frame)
-                frame_count += 1
+	if not isOpened:
+		print("failed to open",videoFile)		
+		return None
 
-    # When everything is complete, release the video capture and video write objects
-    out.release()
-    video.release()
+	width  = int( videoCapture.get(cv2.CAP_PROP_FRAME_WIDTH ) ) 
+	height = int( videoCapture.get(cv2.CAP_PROP_FRAME_HEIGHT) ) 
+	fps    = int( videoCapture.get(cv2.CAP_PROP_FPS) )
+	processingFps = fps
 
-    elapsed_time = time.time() - start.time()
-    print('Elapsed time (total): {:.2f}'.format(elapsed_time))
-    print('Approx. FPS: {:.2f}'.format(frame_count / elapsed_time))
-    
+	base        = os.path.basename(videoFile)
+	fileName, _ = os.path.splitext(base)
+	
+	print("Testing on",base,"   FPS = ",fps)
+	
+	if FLAGS.saveOutput and isOpened:
+		fourcc   = cv2.VideoWriter_fourcc(*'XVID')
+		outVideo = cv2.VideoWriter(FLAGS.outputDirectory + fileName + 
+			 '_output.avi',fourcc, processingFps, (width,height))
+
+	frameCount = 0
+
+	while isOpened:
+		ret, frame = videoCapture.read()
+		if not ret:
+			break
+		frameCount = frameCount + 1
+		# skip frames based on the value of processingFps
+		if frameCount%(fps/processingFps) :
+			continue
+
+		# face detection
+		#faceLocations = face_recognition.face_locations(frame,number_of_times_to_upsample=0)
+		face_landmarks_list = face_recognition.face_landmarks(frame)
+		numFaces      = len(face_landmarks_list)
+
+		# process one face if detected
+		if numFaces:
+			noseTipCenter = face_landmarks_list[0]["nose_bridge"][3]
+			leftEye  = face_landmarks_list[0]["left_eye"]			
+			rightEye = face_landmarks_list[0]["right_eye"]
+			faceWidth = 1.5 * max(distance.euclidean(leftEye[0],noseTipCenter),
+								  distance.euclidean(rightEye[0],noseTipCenter))
+						
+			(left,top)     = np.subtract(noseTipCenter , (faceWidth,faceWidth) )  
+			(right,bottom) = np.add(noseTipCenter , (faceWidth,faceWidth) )
+			left,top,right,bottom = int(left),int(top),int(right),int(bottom)
+
+			cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 6)
+			cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
+
+			face = frame[top:bottom, left:right]
+			# resize to CROP_SIZE whixh is 256 by 256
+			face = cv2.resize(face, CROP_SIZE)
+			#Downscale this cropped face to 0.5x original resolution
+			downScale = int((bottom - top) * CROP_RATIO)
+			faceDownscaled = cv2.resize(face, (downScale, downScale))
+			# upscale the face to put it back to the original frame
+			faceUpscaled = cv2.resize(faceDownscaled, (bottom - top,bottom - top))
+			# put upscaled blurry face to the original image
+			frame[top:bottom, left:right] = faceUpscaled
+			cv2.imshow('faceUpscaled',faceUpscaled)
+
+		cv2.imshow('image',frame)
+		cv2.waitKey(1)
+
+		if FLAGS.saveOutput:
+			outVideo.write(frame)	
+	videoCapture.release()
+	cv2.destroyAllWindows()
+
+	if FLAGS.saveOutput:
+		outVideo.release()
+
+	return None
+
+def processImage(imFile,FLAGS):
+	img = cv2.imread(imFile)
+
+	base        = os.path.basename(imFile)
+	fileName, _ = os.path.splitext(base)
+	
+	if img is None:
+		print("failed to open ",base)
+		return None, 0
+	
+	print("Testing on",base)
+
+	face_landmarks_list = face_recognition.face_landmarks(img)
+	numFaces = len(face_landmarks_list)
+
+	if numFaces:
+		noseTipCenter = face_landmarks_list[0]["nose_bridge"][3]
+		leftEye  = face_landmarks_list[0]["left_eye"]			
+		rightEye = face_landmarks_list[0]["right_eye"]
+		faceWidth = 1.5 * max(distance.euclidean(leftEye[0],noseTipCenter),
+							  distance.euclidean(rightEye[0],noseTipCenter))
+		
+		(left,top)     = np.subtract(noseTipCenter , (faceWidth,faceWidth) )  
+		(right,bottom) = np.add(noseTipCenter , (faceWidth,faceWidth) )
+		left,top,right,bottom = int(left),int(top),int(right),int(bottom)
+
+		face = img[top:bottom, left:right]
+		# resize to CROP_SIZE whixh is 256 by 256
+		face = cv2.resize(face, CROP_SIZE)
+		cv2.imwrite(FLAGS.outputDirectory + fileName + '_output.png', face)
+
+
+
+def main(FLAGS):
+	t0 = time.time()
+
+	if FLAGS.image:
+		files = glob.glob(os.path.join(FLAGS.dir, '*.*'))
+		if files == []:
+			print('No files found in folder: ' + FLAGS.folder)
+			exit(1)
+		for imFile in files:
+			processImage(imFile, FLAGS) 
+	if FLAGS.video:
+		processVideo(FLAGS.dir, FLAGS)
+
+	print("Total processing time = ",int(time.time()-t0),"secs")
+
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--file', dest='filename', type=str, help='Name of the video file.')
-    args = parser.parse_args()
-
-    # Make sure these files are in the root directory
-    # You can download a trained facial shape predictor and recognition model from:
-    # http://dlib.net/files/shape_predictor_5_face_landmarks.dat.bz2
-    # http://dlib.net/files/dlib_face_recognition_resnet_model_v1.dat.bz2
-    predictor_fn = "shape_predictor_5_face_landmarks.dat"
-    face_rec_model_path_fn = "dlib_face_recognition_resnet_model_v1.dat"
-
-    # Create a face detector
-    face_detector = dlib.get_frontal_face_detector()
-    sp = dlib.shape_predictor(predictor_fn)
-    facerec = dlib.face_recognition_model_v1(face_rec_model_path_fn)
-
-    main()
+	FLAGS, unparsed = parser.parse_known_args()
+	main(FLAGS)
