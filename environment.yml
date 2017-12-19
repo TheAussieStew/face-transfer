@@ -16,6 +16,7 @@ dependencies:
 - gettext=0.19.7=1
 - giflib=5.1.4=0
 - glib=2.51.4=0
+- glob
 - gst-plugins-base=1.8.0=0
 - gstreamer=1.8.0=2
 - h5py=2.7.1
