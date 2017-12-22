@@ -60,11 +60,11 @@ def main(args):
     assert input_dir.is_dir()
 
     output_dir = Path('data/training_data') / input_dir.parts[-1]
-    print("Output dir")
+    print("Output dir:")
     print(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # output_file = input_dir / args.output_file
+    output_file = input_dir / args.output_file
 
     input_files = list(input_dir.glob("*." + args.file_type))
     assert len(input_files) > 0, "Can't find input files"
@@ -101,16 +101,15 @@ def main(args):
                 out_fn = output_dir / out_fn
                 cv2.imwrite(str(out_fn), aligned_image)
 
-                # yield str(fn.relative_to(input_dir)), str(out_fn.relative_to(input_dir)), list( alignment.ravel() )
+                yield str(fn), str(out_fn), list( alignment.ravel() )
 
     # Write face alignments to json file
+    face_alignments = list( iter_face_alignments() )
+    with output_file.open('w') as f:
+        results = json.dumps( face_alignments, ensure_ascii=False )
+        f.write( results )
 
-    # face_alignments = list( iter_face_alignments() )
-    # with output_file.open('w') as f:
-    #     results = json.dumps( face_alignments, ensure_ascii=False )
-    #     f.write( results )
-
-    # print( "Save face alignments to output file:", output_file )
+    print( "Save face alignments to output file:", output_file )
 
 
 if __name__ == '__main__':
