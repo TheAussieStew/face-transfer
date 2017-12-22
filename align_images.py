@@ -92,9 +92,9 @@ def main( args ):
 
                 # yield str(fn.relative_to(input_dir)), str(out_fn.relative_to(input_dir)), list( alignment.ravel() )
 
-    face_alignments = list( iter_face_alignments() )
-
     # Write face alignments to json file
+
+    # face_alignments = list( iter_face_alignments() )
     # with output_file.open('w') as f:
     #     results = json.dumps( face_alignments, ensure_ascii=False )
     #     f.write( results )
