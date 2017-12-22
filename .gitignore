@@ -1,5 +1,4 @@
 data/
-training_data/
-raw_data/
 models/
+test/
 __pycache__/
