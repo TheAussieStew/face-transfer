@@ -8,7 +8,9 @@
     OpenCV 3
     Tensorflow 1.3
     Keras 2
-    dlib (You should install using the link below, unless you want to suffer endless configuration issues) 
+    boost
+    boost-python
+    dlib (You should install using the link below, unless you want to suffer the pain of endless configuration issues) 
     https://gist.github.com/ageitgey/629d75c1baac34dfa5ca2a1928a7aeaf
     CUDA Toolkit 8.0 and cuDNN v5.1 (Requires a CUDA GPU)
 ```
