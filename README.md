@@ -30,7 +30,7 @@ python init.py
 ```
 
 To create training data:
-Create a folder in data/raw_data/ and fill it with images of the person whose face you want to transfer. For example:
+Create a folder in data/raw_data/ and fill it with images of the person whose face you want to transfer. For example:  
 ├── data  
 │   ├── raw_data  
 │   │   └── barack_obama  
