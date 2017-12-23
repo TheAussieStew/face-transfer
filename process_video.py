@@ -9,17 +9,6 @@ import face_recognition
 import numpy as np
 from scipy.spatial import distance
 
-parser   = argparse.ArgumentParser()
-
-parser.add_argument('--image', action='store_true' ,help='')
-parser.add_argument('--video', action='store_true' ,help='')
-
-parser.add_argument('--saveOutput' ,action='store_true' ,help='')
-parser.add_argument('--dir', type=str, default='',help='')
-parser.add_argument('--noDisplay', action='store_true' ,help='')
-parser.add_argument('--processingFps', type=int ,default = 1,help='')
-parser.add_argument('--outputDirectory', type=str, default='',help='')
-
 CROP_SIZE  = (256,256)
 CROP_RATIO = 0.5
 
@@ -40,9 +29,7 @@ facial_features = [
 
 from test import convert_one_image
 
-from model import autoencoder_A
-from model import autoencoder_B
-from model import encoder, decoder_A, decoder_B
+from model import Autoencoder, Encoder, Decoder
 
 encoder  .load_weights( "models/encoder.h5"   )
 decoder_A.load_weights( "models/decoder_A.h5" )
@@ -177,5 +164,16 @@ def main(FLAGS):
 	print("Total processing time = ",int(time.time()-t0),"secs")
 
 if __name__ == '__main__':
+	parser   = argparse.ArgumentParser()
+
+	parser.add_argument('--image', action='store_true' ,help='')
+	parser.add_argument('--video', action='store_true' ,help='')
+
+	parser.add_argument('--saveOutput' ,action='store_true' ,help='')
+	parser.add_argument('--dir', type=str, default='',help='')
+	parser.add_argument('--noDisplay', action='store_true' ,help='')
+	parser.add_argument('--processingFps', type=int ,default = 1,help='')
+	parser.add_argument('--outputDirectory', type=str, default='',help='')
+
 	FLAGS, unparsed = parser.parse_known_args()
 	main(FLAGS)
