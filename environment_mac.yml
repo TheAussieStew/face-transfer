@@ -64,6 +64,7 @@ dependencies:
   - protobuf==3.3.0
   - pytz==2017.3
   - tensorflow-tensorboard==0.4.0rc3
+  - tensorflow-gpu
   - werkzeug==0.12.2
 prefix: /home/conwayying/miniconda3/envs/face-transfer
 

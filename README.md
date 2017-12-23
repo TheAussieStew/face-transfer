@@ -6,11 +6,11 @@
     Anaconda
     Python 3
     OpenCV 3
-    Tensorflow 1.3+
+    Tensorflow 1.3
     Keras 2
     dlib    
+    CUDA Toolkit 8.0 and cuDNN v5.1 (Requires a CUDA GPU)
 ```
-Will also require a CUDA enabled GPU, plus CUDA/CUDNN drivers to be installed.
  
 ### Installation
 
