@@ -31,10 +31,10 @@ python init.py
 
 To create training data:
 Create a folder in data/raw_data/ and fill it with images of the person whose face you want to transfer. For example:
-├── data
-│   ├── raw_data
-│   │   └── barack_obama
-│   └── training_data
+├── data  
+│   ├── raw_data  
+│   │   └── barack_obama  
+│   └── training_data  
 Run the following to crop and align the raw data. The resulting training data is placed in data/training_data/[person_name]
 ```
 python align_images.py
