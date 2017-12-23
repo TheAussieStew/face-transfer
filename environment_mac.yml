@@ -5,6 +5,7 @@ channels:
 - defaults
 dependencies:
 - blas=1.1=openblas
+- boost
 - ca-certificates=2017.11.5=0
 - cairo=1.14.6=5
 - certifi=2017.11.5
