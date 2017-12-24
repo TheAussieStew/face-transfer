@@ -40,8 +40,7 @@ def Encoder():
     x = Dense(4 * 4 * 1024)(x)
     x = Reshape((4, 4, 1024))(x)
     x = upscale(512)(x)
-    encoder = Model(input_, x)
-    return encoder
+    return Model(input_, x)
 
 def Decoder():
     input_ = Input(shape=(8, 8, 512))
@@ -55,6 +54,6 @@ def Decoder():
 
 def Autoencoder(encoder, decoder):
     x = Input(shape=IMAGE_SHAPE)
-    autoencoder = Model(x, decoder(encoder))
+    autoencoder = Model(x, decoder(encoder(x)))
     autoencoder.compile(optimizer=optimizer, loss='mean_absolute_error')
     return autoencoder
