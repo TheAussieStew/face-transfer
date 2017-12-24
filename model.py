@@ -3,6 +3,7 @@ from keras.layers import Input, Dense, Flatten, Reshape
 from keras.layers.advanced_activations import LeakyReLU
 from keras.layers.convolutional import Conv2D
 from keras.optimizers import Adam
+from pathlib import Path
 
 from pixel_shuffler import PixelShuffler
 
@@ -42,6 +43,7 @@ def Encoder():
     x = upscale(512)(x)
     return Model(input_, x)
 
+
 def Decoder():
     input_ = Input(shape=(8, 8, 512))
     x = input_
@@ -56,4 +58,22 @@ def Autoencoder(encoder, decoder):
     x = Input(shape=IMAGE_SHAPE)
     autoencoder = Model(x, decoder(encoder(x)))
     autoencoder.compile(optimizer=optimizer, loss='mean_absolute_error')
+    return autoencoder
+
+
+def load_autoencoder(firstname_lastname):
+    """Return an autoencoder for the given person"""
+    encoder = Encoder()
+    decoder = Decoder()
+    autoencoder = Autoencoder(encoder, decoder)
+    models_dir = Path("models")
+
+    try:
+        encoder_dir = models_dir / Path("encoder.h5")
+        decoder_dir = models_dir / Path(firstname_lastname)
+    except Exception as err:
+        print(err)
+
+    encoder.load_weights(str(encoder_dir))
+    decoder.load_weights(str(decoder_dir))
     return autoencoder

@@ -5,21 +5,14 @@ import numpy
 from pathlib import Path
 from tqdm import tqdm
 
-from model import Encoder, Decoder, Autoencoder
+from model import Encoder, Decoder, Autoencoder, load_autoencoder
 
 import tensorflow as tf
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
 sess = tf.Session(config=config)
 
-encoder = Encoder()
-decoder_A = Decoder()
-decoder_B = Decoder()
-autoencoder_A = Autoencoder(encoder, decoder_A)
-autoencoder_B = Autoencoder(encoder, decoder_B)
-encoder.load_weights( "models/encoder.h5"   )
-decoder_A.load_weights( "models/decoder_A.h5" )
-decoder_B.load_weights( "models/decoder_B.h5" )
+autoencoder = load_autoencoder("decoder_A.h5")
 
 def convert_one_image( autoencoder, image, mat ):
     size = 64
@@ -42,9 +35,6 @@ def main( args ):
 
     output_dir = input_dir / args.output_dir
     output_dir.mkdir( parents=True, exist_ok=True )
-
-    if args.direction == 'AtoB': autoencoder = autoencoder_B
-    if args.direction == 'BtoA': autoencoder = autoencoder_A
 
     for image_file, face_file, mat in tqdm( alignments ):
         image = cv2.imread( str( image_file ) )
@@ -69,6 +59,5 @@ if __name__ == '__main__':
     parser.add_argument( "input_dir", type=str )
     parser.add_argument( "alignments", type=str, nargs='?', default='alignments.json' )
     parser.add_argument( "output_dir", type=str, nargs='?', default='merged' )
-    parser.add_argument( "--direction", type=str, default="AtoB", choices=["AtoB", "BtoA"])
     main( parser.parse_args() )
 
