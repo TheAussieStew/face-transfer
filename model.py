@@ -71,7 +71,7 @@ def load_autoencoder(firstname_lastname):
     try:
         encoder_dir = models_dir / Path("encoder.h5")
         decoder_dir = models_dir / Path(firstname_lastname)
-    except Exception as err:
+    except OSError as err:
         print(err)
 
     encoder.load_weights(str(encoder_dir))
