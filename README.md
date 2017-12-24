@@ -40,7 +40,8 @@ Create a folder in data/raw_data/ and fill it with images of the person whose fa
 |---|---|-- barack_obama  
 |---|-- training_data  
 
-Run the following to crop and align the raw data. The resulting training data is placed in data/training_data/[person_name]
+Run the following to crop and align the raw data. The resulting training data is placed in data/training_data/firstname_lastname
+This naming convention will be maintained throughout the entire program.
 ```
 python align_images.py
 ```
