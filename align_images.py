@@ -55,11 +55,35 @@ def transform(image, mat, size, padding=0):
     return cv2.warpAffine(image, mat, (new_size, new_size))
 
 
+def get_cropped_faces(image):
+    """Get pose invariant crop of all the faces in image"""
+    cropped_faces = []
+    try:
+        faces = FACE_ALIGNMENT.get_landmarks(image)
+    except RuntimeError as err:
+        print("{} Skipping this image...".format(err))
+        return
+
+    if faces is None:
+        return None
+    if len(faces) == 0:
+        return None
+
+    for points in faces:
+        alignment = umeyama(points[17:], landmarks_2D, True)[0:2]
+        aligned_image = transform(image, alignment, 160, 48)
+        cv2.imshow('aligned_image', aligned_image)
+        cv2.waitKey(5)
+        cropped_faces.append([list(alignment.ravel()), aligned_image])
+
+    return cropped_faces
+
+
 def main(args):
     input_dir = Path(args.input_dir)
     assert input_dir.is_dir()
 
-    output_dir = Path('data/training_data') / input_dir.parts[-1]
+    output_dir = Path('data/training_data') / input_dir.stem
     print("Output dir:")
     print(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -76,24 +100,9 @@ def main(args):
                 tqdm.write("Can't read image file: ", fn)
                 continue
 
-            try:
-                faces = FACE_ALIGNMENT.get_landmarks(
-                    skimage.io.imread(str(fn)))
-            except RuntimeError as err:
-                print("{} Skipping...".format(err))
-
-            if faces is None:
-                continue
-            if len(faces) == 0:
-                continue
-            if args.only_one_face and len(faces) != 1:
-                continue
-
-            for i, points in enumerate(faces):
-                alignment = umeyama(points[17:], landmarks_2D, True)[0:2]
-                aligned_image = transform(image, alignment, 160, 48)
-
-                if len(faces) == 1:
+            cropped_faces = get_cropped_faces(image)
+            for i, (mat, aligned_image) in enumerate(cropped_faces):
+                if len(cropped_faces) == 1:
                     out_fn = "{}.jpg".format(Path(fn).stem)
                 else:
                     out_fn = "{}_{}.jpg".format(Path(fn).stem, i)
@@ -101,15 +110,15 @@ def main(args):
                 out_fn = output_dir / out_fn
                 cv2.imwrite(str(out_fn), aligned_image)
 
-                yield str(fn), str(out_fn), list( alignment.ravel() )
+                yield str(fn), str(out_fn), mat
 
     # Write face alignments to json file
-    face_alignments = list( iter_face_alignments() )
+    face_alignments = list(iter_face_alignments())
     with output_file.open('w') as f:
-        results = json.dumps( face_alignments, ensure_ascii=False )
-        f.write( results )
+        results = json.dumps(face_alignments, ensure_ascii=False)
+        f.write(results)
 
-    print( "Save face alignments to output file:", output_file )
+    print("Save face alignments to output file:", output_file)
 
 
 if __name__ == '__main__':
