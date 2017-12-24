@@ -5,11 +5,19 @@ import numpy
 from pathlib import Path
 from tqdm import tqdm
 
-from model import autoencoder_A
-from model import autoencoder_B
-from model import encoder, decoder_A, decoder_B
+from model import Encoder, Decoder, Autoencoder
 
-encoder  .load_weights( "models/encoder.h5"   )
+import tensorflow as tf
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True
+sess = tf.Session(config=config)
+
+encoder = Encoder()
+decoder_A = Decoder()
+decoder_B = Decoder()
+autoencoder_A = Autoencoder(encoder, decoder_A)
+autoencoder_B = Autoencoder(encoder, decoder_B)
+encoder.load_weights( "models/encoder.h5"   )
 decoder_A.load_weights( "models/decoder_A.h5" )
 decoder_B.load_weights( "models/decoder_B.h5" )
 
