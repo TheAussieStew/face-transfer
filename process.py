@@ -67,8 +67,6 @@ def process_video(video_file, FLAGS):
     if FLAGS.saveOutput:
         out_video.release()
 
-    return None
-
 
 # def processImage(imFile, FLAGS):
 #     img = cv2.imread(imFile)
