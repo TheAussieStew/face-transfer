@@ -37,7 +37,7 @@ def process_video(video_file, FLAGS):
 
     autoencoder = load_autoencoder("decoder_" + FLAGS.decoder)
 
-    progress_bar = tqdm(total=total_frame_count)
+    progress_bar = tqdm(total=total_frame_count, unit="frame")
     while is_opened:
         ret, frame = video_capture.read()
         if not ret:
