@@ -62,7 +62,7 @@ def get_cropped_faces(image):
         faces = FACE_ALIGNMENT.get_landmarks(image)
     except RuntimeError as err:
         print("{} Skipping this image...".format(err))
-        return
+        return None
 
     if faces is None:
         return None
@@ -101,6 +101,10 @@ def main(args):
                 continue
 
             cropped_faces = get_cropped_faces(image)
+
+            if cropped_faces is None:
+                continue
+
             for i, (mat, aligned_image) in enumerate(cropped_faces):
                 if len(cropped_faces) == 1:
                     out_fn = "{}.jpg".format(Path(fn).stem)

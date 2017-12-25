@@ -5,9 +5,12 @@ import argparse
 import time
 import glob
 
-import face_recognition
 import numpy as np
-from scipy.spatial import distance
+
+from model import Autoencoder, Encoder, Decoder, load_autoencoder
+
+from align_images import get_cropped_faces
+from merge_faces import convert_one_image
 
 CROP_SIZE = (256, 256)
 CROP_RATIO = 0.5
@@ -23,18 +26,6 @@ facial_features = [
     "top_lip",
     "bottom_lip"
 ]
-
-#faceLocations = face_recognition.face_locations(frame)
-#numFaces      = len(faceLocations)
-
-from test import convert_one_image
-
-from model import Autoencoder, Encoder, Decoder
-
-encoder  .load_weights("models/encoder.h5")
-decoder_A.load_weights("models/decoder_A.h5")
-decoder_B.load_weights("models/decoder_B.h5")
-
 
 def processVideo(videoFile, FLAGS):
     videoCapture = cv2.VideoCapture(videoFile)
@@ -61,54 +52,37 @@ def processVideo(videoFile, FLAGS):
 
     frameCount = 0
 
+    autoencoder = load_autoencoder("decoder_" + FLAGS.decoder)
+
     while isOpened:
         ret, frame = videoCapture.read()
         if not ret:
             break
-        frameCount = frameCount + 1
+        frameCount += 1
         # skip frames based on the value of processingFps
         if frameCount % (fps / processingFps):
             continue
 
         # face detection
-        #faceLocations = face_recognition.face_locations(frame,number_of_times_to_upsample=0)
-        face_landmarks_list = face_recognition.face_landmarks(frame)
-        numFaces = len(face_landmarks_list)
+        cropped_faces = get_cropped_faces(frame)
 
-        # process one face if detected
-        if numFaces:
-            noseTipCenter = face_landmarks_list[0]["nose_bridge"][3]
-            leftEye = face_landmarks_list[0]["left_eye"]
-            rightEye = face_landmarks_list[0]["right_eye"]
-            faceWidth = 1.9 * max(distance.euclidean(leftEye[0], noseTipCenter),
-                                  distance.euclidean(rightEye[0], noseTipCenter))
+        # skip frame if no faces are detected
+        if cropped_faces is None:
+            continue
 
-            (left, top) = np.subtract(noseTipCenter, (faceWidth, faceWidth))
-            (right, bottom) = np.add(noseTipCenter, (faceWidth, faceWidth))
-            vertical_offset = 20
-            left, top, right, bottom = int(left), int(
-                top + vertical_offset), int(right), int(bottom + vertical_offset)
+        for mat, aligned_image in cropped_faces:
+            mat = np.array(mat).reshape(2, 3)
 
-            cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 6)
-            cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
+            new_image = convert_one_image(autoencoder, frame, mat)
 
-            face = frame[top:bottom, left:right]
-            # resize to CROP_SIZE whixh is 256 by 256
-            face = cv2.resize(face, CROP_SIZE)
-            # transform using autoencoder
-            new_face = convert_one_image(autoencoder_A, face)
-            # upscale the new face to put it back to the original frame
-            new_face = cv2.resize(new_face, (bottom - top, bottom - top))
-            # put new face onto the original image
-            frame[top:bottom, left:right] = new_face
-
-        #cv2.imshow("image",frame)
+        cv2.imshow("image", new_image)
+        cv2.waitKey(1)
         if frameCount % 10 == 0:
             print("{} frames processed".format(frameCount))
-        cv2.waitKey(1)
 
         if FLAGS.saveOutput:
-            outVideo.write(frame)
+            outVideo.write(new_image)
+
     videoCapture.release()
     cv2.destroyAllWindows()
 
@@ -118,36 +92,36 @@ def processVideo(videoFile, FLAGS):
     return None
 
 
-def processImage(imFile, FLAGS):
-    img = cv2.imread(imFile)
+# def processImage(imFile, FLAGS):
+#     img = cv2.imread(imFile)
 
-    base = os.path.basename(imFile)
-    fileName, _ = os.path.splitext(base)
+#     base = os.path.basename(imFile)
+#     fileName, _ = os.path.splitext(base)
 
-    if img is None:
-        print("failed to open ", base)
-        return None, 0
+#     if img is None:
+#         print("failed to open ", base)
+#         return None, 0
 
-    print("Testing on", base)
+#     print("Testing on", base)
 
-    face_landmarks_list = face_recognition.face_landmarks(img)
-    numFaces = len(face_landmarks_list)
+#     face_landmarks_list = face_recognition.face_landmarks(img)
+#     numFaces = len(face_landmarks_list)
 
-    if numFaces:
-        noseTipCenter = face_landmarks_list[0]["nose_bridge"][3]
-        leftEye = face_landmarks_list[0]["left_eye"]
-        rightEye = face_landmarks_list[0]["right_eye"]
-        faceWidth = 1.5 * max(distance.euclidean(leftEye[0], noseTipCenter),
-                              distance.euclidean(rightEye[0], noseTipCenter))
+#     if numFaces:
+#         noseTipCenter = face_landmarks_list[0]["nose_bridge"][3]
+#         leftEye = face_landmarks_list[0]["left_eye"]
+#         rightEye = face_landmarks_list[0]["right_eye"]
+#         faceWidth = 1.5 * max(distance.euclidean(leftEye[0], noseTipCenter),
+#                               distance.euclidean(rightEye[0], noseTipCenter))
 
-        (left, top) = np.subtract(noseTipCenter, (faceWidth, faceWidth))
-        (right, bottom) = np.add(noseTipCenter, (faceWidth, faceWidth))
-        left, top, right, bottom = int(left), int(top), int(right), int(bottom)
+#         (left, top) = np.subtract(noseTipCenter, (faceWidth, faceWidth))
+#         (right, bottom) = np.add(noseTipCenter, (faceWidth, faceWidth))
+#         left, top, right, bottom = int(left), int(top), int(right), int(bottom)
 
-        face = img[top:bottom, left:right]
-        # resize to CROP_SIZE whixh is 256 by 256
-        face = cv2.resize(face, CROP_SIZE)
-        cv2.imwrite(FLAGS.outputDirectory + fileName + "_output.png", face)
+#         face = img[top:bottom, left:right]
+#         # resize to CROP_SIZE whixh is 256 by 256
+#         face = cv2.resize(face, CROP_SIZE)
+#         cv2.imwrite(FLAGS.outputDirectory + fileName + "_output.png", face)
 
 
 def main(FLAGS):
@@ -168,7 +142,7 @@ def main(FLAGS):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-
+    parser.add_argument("decoder", type=str)
     parser.add_argument("--image", action="store_true", help="")
     parser.add_argument("--video", action="store_true", help="")
 

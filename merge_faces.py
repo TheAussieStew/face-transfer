@@ -46,6 +46,9 @@ def main(args):
             print("No face found")
             continue
 
+        cv2.imshow("image", image)
+        cv2.waitKey(4000)
+
         new_image = convert_one_image(autoencoder, image, mat)
 
         output_file = output_dir / Path(image_file).name
