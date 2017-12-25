@@ -5,7 +5,7 @@ import numpy
 from pathlib import Path
 from tqdm import tqdm
 
-from model import Encoder, Decoder, Autoencoder, load_autoencoder
+from model import load_autoencoder
 
 
 def convert_one_image(autoencoder, image, mat):
