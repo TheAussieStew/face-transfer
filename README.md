@@ -43,20 +43,23 @@ https://github.com/ostrolucky/Bulk-Bing-Image-downloader
 ./bbid.py -s "ryan gosling" --filters +filterui:imagesize-wallpaper+filterui:face-portrait -o data/raw_data/ryan_gosling
 ```
 
-2. Gather images from videos, by using ffmpeg to convert the video to frames with a limited framerate.
+2. Gather images from videos, by using ffmpeg to convert the video into frames with a limited framerate.
 ```
 ffmpeg -i ryan_gosling.webm -ss 00:00:47 -t 00:00:15 -q:v 1 -vf fps=0.5 rg%d.jpeg
 # -ss is the start time
 # -t is the length after the start time
 # -q:v controls the quality of the video encoder, lower is better
 ```
+
+You should now go through all your images and delete images without a face in them. The script skips images without faces in them, but each image takes a while to scan so it's best if we take out images without a face in them. If there are multiple faces in an image, that's fine - we'll deal with that after we've created our training data.
+
 ### Creating Training Data
 
 Run the following to crop and align the raw data. 
 ```
 python align_images.py data/raw_data/ryan_gosling
 ```
-The resulting training data is placed in data/training_data/firstname_lastname.
+The resulting training data is placed in data/training_data/firstname_lastname. Go through the images and delete any images without clear faces in them.
 
 |--- data  
 |---|-- raw_data  
