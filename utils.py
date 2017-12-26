@@ -1,6 +1,16 @@
 import cv2
 import numpy
 import os
+import pathlib
+
+def generate_dirs():
+    pathlib.Path('data/raw_data').mkdir(parents=True, exist_ok=True) 
+    pathlib.Path('data/training_data').mkdir(parents=True, exist_ok=True) 
+    pathlib.Path('models').mkdir(parents=True, exist_ok=True) 
+    pathlib.Path('test/input/videos').mkdir(parents=True, exist_ok=True) 
+    pathlib.Path('test/input/images').mkdir(parents=True, exist_ok=True) 
+    pathlib.Path('test/output/videos').mkdir(parents=True, exist_ok=True) 
+    pathlib.Path('test/output/images').mkdir(parents=True, exist_ok=True) 
 
 def get_image_paths( directory ):
     return [ x.path for x in os.scandir( directory ) if x.name.endswith(".jpg") or x.name.endswith(".png") ]

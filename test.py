@@ -12,8 +12,8 @@ encoder  .load_weights( "models/encoder.h5"   )
 decoder_A.load_weights( "models/decoder_A.h5" )
 decoder_B.load_weights( "models/decoder_B.h5" )
  
-images_A = get_image_paths( "data/trump" )
-images_B = get_image_paths( "data/cage" )
+images_A = get_image_paths( "training_data/trump" )
+images_B = get_image_paths( "training_data/cage" )
  
 def convert_one_image( autoencoder, image ):
     assert image.shape == (256,256,3)
@@ -28,10 +28,10 @@ def convert_one_image( autoencoder, image ):
     new_image[crop,crop] = new_face
     return new_image
  
-output_dir = Path( 'output' )
+output_dir = Path( 'test_output_images/cage' )
 output_dir.mkdir( parents=True, exist_ok=True )
  
-for fn in images_A[0:7]
+for fn in images_A[0:7]:
     image = cv2.imread(fn)
     new_image = convert_one_image( autoencoder_B, image )
     output_file = output_dir / Path(fn).name
