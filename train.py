@@ -22,7 +22,7 @@ def main(FLAGS):
     training_data_dir = Path("data/training_data")
     person_A_training_data = training_data_dir / Path(FLAGS.person_A)
     person_B_training_data = training_data_dir / Path(FLAGS.person_B)
-    encoder_fn = models_dir / Path("encoder" + ".h5")
+    encoder_fn = models_dir / Path("encoder_" + FLAGS.encoder + ".h5")
     decoder_A_fn = models_dir / Path("decoder_" + FLAGS.person_A + ".h5")
     decoder_B_fn = models_dir / Path("decoder_" + FLAGS.person_B + ".h5")
 
@@ -97,7 +97,8 @@ def main(FLAGS):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("person_A", type=str)
-    parser.add_argument("person_B", type=str)
+    parser.add_argument("encoder", type=str, help="Name of encoder")
+    parser.add_argument("person_A", type=str, help="Name of person A")
+    parser.add_argument("person_B", type=str, help="Name of person B")
     FLAGS, unparsed = parser.parse_known_args()
     main(FLAGS)
