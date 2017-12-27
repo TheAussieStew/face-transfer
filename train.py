@@ -87,8 +87,8 @@ def main(FLAGS):
 
             figure = numpy.clip(figure * 255, 0, 255).astype('uint8')
 
-            cv2.imshow("", figure)
-            key = cv2.waitKey(1)
+        cv2.imshow("", figure)
+        key = cv2.waitKey(1)
 
         if key == ord('q'):
             save_model_weights()
