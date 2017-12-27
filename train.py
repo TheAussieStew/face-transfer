@@ -28,7 +28,7 @@ def main(FLAGS):
 
     try:
         encoder.load_weights(str(encoder_fn))
-    except IOError as err:
+    except IOError:
         user_input = input(
             "Couldn't load encoder. Do you want to create a new one? (Y/n)\n")
         if user_input is not "Y":
@@ -37,17 +37,16 @@ def main(FLAGS):
     try:
         decoder_A.load_weights(str(decoder_A_fn))
         decoder_B.load_weights(str(decoder_B_fn))
-    except:
+    except IOError:
         user_input = input(
             "Couldn't load decoder/s. Do you want to create a new one? (Y/n)\n")
         if user_input is not "Y":
             exit(1)
 
     def save_model_weights():
-        encoder  .save_weights(str(encoder_fn))
+        encoder.save_weights(str(encoder_fn))
         decoder_A.save_weights(str(decoder_A_fn))
         decoder_B.save_weights(str(decoder_B_fn))
-        print("Saved model weights")
 
     images_A = get_image_paths(str(person_A_training_data))
     images_B = get_image_paths(str(person_B_training_data))
@@ -56,17 +55,22 @@ def main(FLAGS):
 
     print("Press 'q' to stop training and save model")
 
-    for iteration in tqdm(range(1000000)):
+    max_iters = 10000
+    progress_bar = tqdm(total=max_iters)
+    for iteration in range(max_iters):
         batch_size = 64
         warped_A, target_A = get_training_data(images_A, batch_size)
         warped_B, target_B = get_training_data(images_B, batch_size)
 
         loss_A = autoencoder_A.train_on_batch(warped_A, target_A)
         loss_B = autoencoder_B.train_on_batch(warped_B, target_B)
-        print("autoencoder_A loss: {} | autoencoder_B loss: {}".format(loss_A, loss_B))
 
         if iteration % 5 == 0:
             save_model_weights()
+            progress_bar.write("Saved model weights")
+            progress_bar.write("Iteration {}".format(iteration))
+            progress_bar.write(
+                "autoencoder_A loss: {:.5f} | autoencoder_B loss: {:.5f}".format(loss_A, loss_B))
             test_A = target_A[0:14]
             test_B = target_B[0:14]
 
