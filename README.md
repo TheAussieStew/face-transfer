@@ -67,6 +67,14 @@ The resulting training data is placed in data/training_data/firstname_lastname. 
 |---|-- training_data  
 |---|---|-- barack_obama  
 
+### Training models
+Run the following to train 2 encoder:decoder pairs (autoencoders):
+encoder_new.h5:decoder_ryan_gosling.h5
+encoder_new.h5:decoder_daisy_ridley.h5
+```
+python train.py new ryan_gosling daisy_ridley
+```
+
 ## Common Issues
 Issue: I'm having issues with dlib
 Solution: Compile and install dlib from source
