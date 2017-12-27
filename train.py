@@ -56,7 +56,7 @@ def main(FLAGS):
 
     print("Press 'q' to stop training and save model")
 
-    for iteration in tdqm(range(1000000)):
+    for iteration in tqdm(range(1000000)):
         batch_size = 64
         warped_A, target_A = get_training_data(images_A, batch_size)
         warped_B, target_B = get_training_data(images_B, batch_size)
