@@ -42,7 +42,7 @@ def convert_one_image(autoencoder, image, mat):
     new_face = numpy.clip(new_face * 255, 0, 255).astype(image.dtype)
 
     # blending
-    adjust_avg_color(old_face, new_face)
+    # adjust_avg_color(old_face, new_face)
     smooth_mask(old_face, new_face)
 
     # copy new face onto old image
