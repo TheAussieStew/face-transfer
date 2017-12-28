@@ -38,7 +38,7 @@ def convert_one_image(autoencoder, image, mat):
     size = 64
     old_face = cv2.warpAffine(image, mat * size, (size, size))
     old_face = numpy.expand_dims(old_face, 0)
-    new_face = autoencoder.predict(face / 255.0)[0]
+    new_face = autoencoder.predict(old_face / 255.0)[0]
     new_face = numpy.clip(new_face * 255, 0, 255).astype(image.dtype)
 
     # blending
