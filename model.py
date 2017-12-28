@@ -61,7 +61,7 @@ def Autoencoder(encoder, decoder):
     return autoencoder
 
 
-def load_autoencoder(encoder, decoder):
+def load_autoencoder(encoder_name, decoder_name):
     """Return an autoencoder for the given person"""
     encoder = Encoder()
     decoder = Decoder()
@@ -69,8 +69,8 @@ def load_autoencoder(encoder, decoder):
     models_dir = Path("models")
 
     try:
-        encoder_dir = models_dir / Path("encoder_" + encoder + ".h5")
-        decoder_dir = models_dir / Path("decoder_" + decoder + ".h5")
+        encoder_dir = models_dir / Path("encoder_" + encoder_name + ".h5")
+        decoder_dir = models_dir / Path("decoder_" + decoder_name + ".h5")
     except OSError as err:
         print(err)
 
