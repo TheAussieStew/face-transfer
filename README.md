@@ -75,6 +75,13 @@ encoder_new.h5:decoder_daisy_ridley.h5
 python train.py new ryan_gosling daisy_ridley
 ```
 
+### Processing video
+Run the following to process and output a video:
+```
+python process.py old ryan_gosling --video --dir test/input/videos/conway_video.mov
+```
+This will output a video into the root directory.
+
 ## Common Issues
-Issue: I'm having issues with dlib
+Issue: I'm having issues with dlib  
 Solution: Compile and install dlib from source

@@ -38,7 +38,9 @@ def process_video(video_file, FLAGS):
     autoencoder = load_autoencoder(FLAGS.encoder, FLAGS.decoder)
 
     progress_bar = tqdm(total=total_frame_count, unit="frame")
+    frame_count = 0
     while is_opened:
+        frame_count += 1
         ret, frame = video_capture.read()
         if not ret:
             break
@@ -53,13 +55,15 @@ def process_video(video_file, FLAGS):
 
             new_image = convert_one_image(autoencoder, frame, mat)
 
-        cv2.imshow("new_image", new_image)
-        cv2.waitKey(1)
+        if frame_count % 5 == 0:
+            cv2.imshow("new_image", new_image)
+            cv2.waitKey(1)
 
         if FLAGS.saveOutput:
             out_video.write(new_image)
 
         progress_bar.update(1)
+    progress_bar.close()
 
     video_capture.release()
     cv2.destroyAllWindows()
