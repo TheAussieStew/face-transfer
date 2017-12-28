@@ -35,7 +35,7 @@ def process_video(video_file, FLAGS):
         out_video = cv2.VideoWriter(FLAGS.outputDirectory + filename +
                                    "_output.avi", fourcc, processing_fps, (width, height))
 
-    autoencoder = load_autoencoder("decoder_" + FLAGS.decoder)
+    autoencoder = load_autoencoder(FLAGS.encoder, FLAGS.decoder)
 
     progress_bar = tqdm(total=total_frame_count, unit="frame")
     while is_opened:
@@ -118,6 +118,7 @@ def main(FLAGS):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument("encoder", type=str)
     parser.add_argument("decoder", type=str)
     parser.add_argument("--image", action="store_true", help="")
     parser.add_argument("--video", action="store_true", help="")
