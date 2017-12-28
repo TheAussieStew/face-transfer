@@ -72,8 +72,8 @@ def get_cropped_faces(image):
     for points in faces:
         alignment = umeyama(points[17:], landmarks_2D, True)[0:2]
         aligned_image = transform(image, alignment, 160, 48)
-        cv2.imshow('aligned_image', aligned_image)
-        cv2.waitKey(5)
+        # cv2.imshow('aligned_image', aligned_image)
+        # cv2.waitKey(5)
         cropped_faces.append([list(alignment.ravel()), aligned_image])
 
     return cropped_faces
