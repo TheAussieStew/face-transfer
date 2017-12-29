@@ -58,7 +58,7 @@ def process_video(video_file, FLAGS):
             new_image = convert_one_image(autoencoder, frame, mat)
 
         # how often to show the preview
-        if frame_count % 5 == 0:
+        if FLAGS.display and frame_count % 5 == 0:
             cv2.imshow("new_image", new_image)
             cv2.waitKey(1)
 
@@ -134,7 +134,7 @@ if __name__ == "__main__":
 
     parser.add_argument("--saveOutput", action="store_true", help="")
     parser.add_argument("--dir", type=str, default="", help="")
-    parser.add_argument("--noDisplay", action="store_true", help="")
+    parser.add_argument("--display", action="store_true", help="")
     parser.add_argument("--outputDirectory", type=str, default="", help="")
     parser.add_argument("--frame_limit", type=str, default="1000000", help="")
 
