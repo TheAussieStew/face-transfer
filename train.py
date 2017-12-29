@@ -67,9 +67,7 @@ def main(FLAGS):
 
         if iteration % 20 == 0:
             save_model_weights()
-            progress_bar.write("Saved model weights")
-            progress_bar.write("Iteration {}".format(iteration))
-            progress_bar.write(
+            progress_bar.set_description(
                 "autoencoder_A loss: {} | autoencoder_B loss: {}".format(loss_A, loss_B))
             test_A = target_A[0:14]
             test_B = target_B[0:14]
