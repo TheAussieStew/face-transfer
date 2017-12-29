@@ -70,7 +70,7 @@ def main(FLAGS):
             progress_bar.write("Saved model weights")
             progress_bar.write("Iteration {}".format(iteration))
             progress_bar.write(
-                "autoencoder_A loss: {:.5f} | autoencoder_B loss: {:.5f}".format(loss_A, loss_B))
+                "autoencoder_A loss: {} | autoencoder_B loss: {}".format(loss_A, loss_B))
             test_A = target_A[0:14]
             test_B = target_B[0:14]
 
