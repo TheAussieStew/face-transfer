@@ -65,7 +65,7 @@ def main(FLAGS):
         loss_A = autoencoder_A.train_on_batch(warped_A, target_A)
         loss_B = autoencoder_B.train_on_batch(warped_B, target_B)
 
-        if iteration % 5 == 0:
+        if iteration % 20 == 0:
             save_model_weights()
             progress_bar.write("Saved model weights")
             progress_bar.write("Iteration {}".format(iteration))
@@ -91,8 +91,8 @@ def main(FLAGS):
 
             figure = numpy.clip(figure * 255, 0, 255).astype('uint8')
 
-        cv2.imshow("", figure)
-        key = cv2.waitKey(1)
+            cv2.imshow("", figure)
+            key = cv2.waitKey(1)
 
         if key == ord('q'):
             save_model_weights()
