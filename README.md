@@ -78,9 +78,8 @@ python train.py new ryan_gosling daisy_ridley
 ### Processing video
 Run the following to process and output a video:
 ```
-python process.py old ryan_gosling --video --frame_limit 30 --dir test/input/videos/conway_video.mov --saveOutput
+python process.py old ryan_gosling --video --saveOutput --frame_limit 30 --dir test/input/videos/conway_video.mov --outputDirectory test/output/videos/
 ```
-This will output a video into the root directory.
 
 ## Common Issues
 Issue: I'm having issues with dlib  
