@@ -65,10 +65,11 @@ def main(FLAGS):
         loss_A = autoencoder_A.train_on_batch(warped_A, target_A)
         loss_B = autoencoder_B.train_on_batch(warped_B, target_B)
 
+        progress_bar.set_description(
+            "loss_A: {:.5} | loss_B: {:.5}".format(loss_A, loss_B))
+
         if iteration % 20 == 0:
             save_model_weights()
-            progress_bar.set_description(
-                "autoencoder_A loss: {} | autoencoder_B loss: {}".format(loss_A, loss_B))
             test_A = target_A[0:14]
             test_B = target_B[0:14]
 
