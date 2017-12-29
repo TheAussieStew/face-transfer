@@ -74,6 +74,7 @@ encoder_new.h5:decoder_daisy_ridley.h5
 ```
 python train.py new ryan_gosling daisy_ridley
 ```
+The default batch size of 64 should take about 1 second to process on a Tesla K80.
 
 ### Processing video
 Run the following to process and output a video:
