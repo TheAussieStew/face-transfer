@@ -74,27 +74,29 @@ def main(FLAGS):
             test_A = target_A[0:14]
             test_B = target_B[0:14]
 
-            figure_A = numpy.stack([
-                test_A,
-                autoencoder_A.predict(test_A),
-                autoencoder_B.predict(test_A),
-            ], axis=1)
-            figure_B = numpy.stack([
-                test_B,
-                autoencoder_B.predict(test_B),
-                autoencoder_A.predict(test_B),
-            ], axis=1)
-
-            figure = numpy.concatenate([figure_A, figure_B], axis=0)
-            figure = figure.reshape((4, 7) + figure.shape[1:])
-            figure = stack_images(figure)
-
-            figure = numpy.clip(figure * 255, 0, 255).astype('uint8')
-
             if FLAGS.preview:
-                cv2.imshow("", figure)
-                key = cv2.waitKey(1)
+                # generate preview
+                figure_A = numpy.stack([
+                    test_A,
+                    autoencoder_A.predict(test_A),
+                    autoencoder_B.predict(test_A),
+                ], axis=1)
+                figure_B = numpy.stack([
+                    test_B,
+                    autoencoder_B.predict(test_B),
+                    autoencoder_A.predict(test_B),
+                ], axis=1)
 
+                figure = numpy.concatenate([figure_A, figure_B], axis=0)
+                figure = figure.reshape((4, 7) + figure.shape[1:])
+                figure = stack_images(figure)
+
+                figure = numpy.clip(figure * 255, 0, 255).astype('uint8')
+
+                # show preview
+                cv2.imshow("", figure)
+
+        key = cv2.waitKey(1)
         if key == ord('q'):
             save_model_weights()
             exit()
