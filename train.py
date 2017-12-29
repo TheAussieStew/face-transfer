@@ -95,6 +95,8 @@ def main(FLAGS):
 
                 # show preview
                 cv2.imshow("", figure)
+        
+        progress_bar.update(1)
 
         key = cv2.waitKey(1)
         if key == ord('q'):
