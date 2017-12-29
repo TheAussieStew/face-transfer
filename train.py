@@ -91,8 +91,9 @@ def main(FLAGS):
 
             figure = numpy.clip(figure * 255, 0, 255).astype('uint8')
 
-            cv2.imshow("", figure)
-            key = cv2.waitKey(1)
+            if FLAGS.preview:
+                cv2.imshow("", figure)
+                key = cv2.waitKey(1)
 
         if key == ord('q'):
             save_model_weights()
@@ -104,5 +105,6 @@ if __name__ == "__main__":
     parser.add_argument("encoder", type=str, help="Name of encoder")
     parser.add_argument("person_A", type=str, help="Name of person A")
     parser.add_argument("person_B", type=str, help="Name of person B")
+    parser.add_argument("--preview", action="store_true", help="")
     FLAGS, unparsed = parser.parse_known_args()
     main(FLAGS)
