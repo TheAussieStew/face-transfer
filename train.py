@@ -55,9 +55,8 @@ def main(FLAGS):
 
     print("Press 'q' to stop training and save model")
 
-    max_iters = 1000
-    progress_bar = tqdm(total=max_iters, desc="")
-    for iteration in range(max_iters):
+    progress_bar = tqdm(total=FLAGS.max_iters, desc="")
+    for iteration in range(FLAGS.max_iters):
         batch_size = 64
         warped_A, target_A = get_training_data(images_A, batch_size)
         warped_B, target_B = get_training_data(images_B, batch_size)
@@ -109,5 +108,6 @@ if __name__ == "__main__":
     parser.add_argument("person_A", type=str, help="Name of person A")
     parser.add_argument("person_B", type=str, help="Name of person B")
     parser.add_argument("--preview", action="store_true", help="")
+    parser.add_argument("--max_iters", type=int, default="10000")
     FLAGS, unparsed = parser.parse_known_args()
     main(FLAGS)
