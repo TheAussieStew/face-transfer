@@ -40,7 +40,10 @@ def process_video(video_file, FLAGS):
     progress_bar = tqdm(total=total_frame_count, unit="frame")
     frame_count = 0
     while is_opened:
-        frame_count += 1
+        # process video until we reach frame limit
+        if frame_count == FLAGS.frame_limit:
+            break
+
         ret, frame = video_capture.read()
         if not ret:
             break
@@ -52,9 +55,9 @@ def process_video(video_file, FLAGS):
 
         for mat, aligned_image in cropped_faces:
             mat = np.array(mat).reshape(2, 3)
-
             new_image = convert_one_image(autoencoder, frame, mat)
 
+        # how often to show the preview
         if frame_count % 5 == 0:
             cv2.imshow("new_image", new_image)
             cv2.waitKey(1)
@@ -63,8 +66,9 @@ def process_video(video_file, FLAGS):
             out_video.write(new_image)
 
         progress_bar.update(1)
-    progress_bar.close()
+        frame_count += 1
 
+    progress_bar.close()
     video_capture.release()
     cv2.destroyAllWindows()
 
@@ -107,13 +111,14 @@ def process_video(video_file, FLAGS):
 def main(FLAGS):
     t0 = time.time()
 
-    if FLAGS.image:
-        files = glob.glob(os.path.join(FLAGS.dir, "*.*"))
-        if files == []:
-            print("No files found in folder: " + FLAGS.folder)
-            exit(1)
-        for imFile in files:
-            processImage(imFile, FLAGS)
+    # Image processing incomplete for now
+    # if FLAGS.image:
+    #     files = glob.glob(os.path.join(FLAGS.dir, "*.*"))
+    #     if files == []:
+    #         print("No files found in folder: " + FLAGS.folder)
+    #         exit(1)
+    #     for imFile in files:
+    #         processImage(imFile, FLAGS)
     if FLAGS.video:
         process_video(FLAGS.dir, FLAGS)
 
@@ -131,6 +136,7 @@ if __name__ == "__main__":
     parser.add_argument("--dir", type=str, default="", help="")
     parser.add_argument("--noDisplay", action="store_true", help="")
     parser.add_argument("--outputDirectory", type=str, default="", help="")
+    parser.add_argument("--frame_limit", type=str, default="1000000", help="")
 
     FLAGS, unparsed = parser.parse_known_args()
     main(FLAGS)
