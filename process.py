@@ -136,7 +136,7 @@ if __name__ == "__main__":
     parser.add_argument("--dir", type=str, default="", help="")
     parser.add_argument("--display", action="store_true", help="")
     parser.add_argument("--outputDirectory", type=str, default="", help="")
-    parser.add_argument("--frame_limit", type=str, default="1000000", help="")
+    parser.add_argument("--frame_limit", type=int, default="1000000", help="")
 
     FLAGS, unparsed = parser.parse_known_args()
     main(FLAGS)
