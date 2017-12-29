@@ -56,7 +56,7 @@ def main(FLAGS):
     print("Press 'q' to stop training and save model")
 
     max_iters = 1000
-    progress_bar = tqdm(total=max_iters)
+    progress_bar = tqdm(total=max_iters, desc="")
     for iteration in range(max_iters):
         batch_size = 64
         warped_A, target_A = get_training_data(images_A, batch_size)
