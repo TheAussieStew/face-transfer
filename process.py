@@ -51,6 +51,7 @@ def process_video(video_file, FLAGS):
         cropped_faces = get_cropped_faces(frame)
 
         if cropped_faces is None:
+            progress_bar.update(1)
             frame_count += 1
             continue
 
