@@ -49,8 +49,8 @@ def process_video(video_file, FLAGS):
         # rescale frame
         if FLAGS.rescale:
             height, width, layers = frame.shape
-            new_height = height * FLAGS.rescale_ratio
-            new_width = width * FLAGS.rescale_ratio
+            new_height = int(height * FLAGS.rescale_ratio)
+            new_width = int(width * FLAGS.rescale_ratio)
             frame = cv2.resize(frame, (new_width, new_height))
 
         if not ret:
