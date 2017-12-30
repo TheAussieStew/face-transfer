@@ -58,7 +58,7 @@ def process_video(video_file, FLAGS):
             height, width, layers = frame.shape
             height = int(height * FLAGS.rescale_ratio)
             width = int(width * FLAGS.rescale_ratio)
-            frame = cv2.resize(frame, (new_width, new_height))
+            frame = cv2.resize(frame, (width, height))
 
         cropped_faces = get_cropped_faces(frame)
 
