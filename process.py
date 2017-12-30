@@ -30,6 +30,10 @@ def process_video(video_file, FLAGS):
 
     print("Testing on", base, "   FPS = ", fps)
 
+    if FLAGS.rescale:
+        height = int(height * FLAGS.rescale_ratio)
+        width = int(width * FLAGS.rescale_ratio)
+
     if FLAGS.saveOutput and is_opened:
         fourcc = cv2.VideoWriter_fourcc(*"XVID")
         out_video = cv2.VideoWriter(FLAGS.outputDirectory + filename +
@@ -52,8 +56,8 @@ def process_video(video_file, FLAGS):
         # rescale frame
         if FLAGS.rescale:
             height, width, layers = frame.shape
-            new_height = int(height * FLAGS.rescale_ratio)
-            new_width = int(width * FLAGS.rescale_ratio)
+            height = int(height * FLAGS.rescale_ratio)
+            width = int(width * FLAGS.rescale_ratio)
             frame = cv2.resize(frame, (new_width, new_height))
 
         cropped_faces = get_cropped_faces(frame)
