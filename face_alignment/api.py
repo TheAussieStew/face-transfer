@@ -149,7 +149,7 @@ class FaceAlignment:
         Returns:
             Returns a list of detected faces
         """
-        return self.face_detector(image, 1)
+        return self.face_detector(image, 0)
 
     def get_landmarks(self, input_image, all_faces=False):
         if isinstance(input_image, str):

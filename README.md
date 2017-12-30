@@ -74,13 +74,13 @@ encoder_new.h5:decoder_daisy_ridley.h5
 ```
 python train.py new ryan_gosling daisy_ridley
 ```
+The default batch size of 64 should take about 1 second to process on a Tesla K80.
 
 ### Processing video
 Run the following to process and output a video:
 ```
-python process.py old ryan_gosling --video --dir test/input/videos/conway_video.mov
+python process.py old ryan_gosling --video --saveOutput --frame_limit 30 --dir test/input/videos/conway_video.mov --outputDirectory test/output/videos/
 ```
-This will output a video into the root directory.
 
 ## Common Issues
 Issue: I'm having issues with dlib  
