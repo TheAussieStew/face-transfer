@@ -67,7 +67,7 @@ def main(FLAGS):
         progress_bar.set_description(
             "loss_A: {:10.5} | loss_B: {:10.5}".format(loss_A, loss_B))
 
-        if iteration % 20 == 0:
+        if iteration % 100 == 0:
             save_model_weights()
             test_A = target_A[0:14]
             test_B = target_B[0:14]
