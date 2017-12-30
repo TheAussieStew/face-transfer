@@ -45,6 +45,14 @@ def process_video(video_file, FLAGS):
             break
 
         ret, frame = video_capture.read()
+
+        # rescale frame
+        if FLAGS.rescale:
+            height, width, layers = frame.shape
+            new_height = height * FLAGS.rescale_ratio
+            new_width = width * FLAGS.rescale_ratio
+            frame = cv2.resize(frame, (new_width, new_height))
+
         if not ret:
             break
 
@@ -133,12 +141,14 @@ if __name__ == "__main__":
     parser.add_argument("decoder", type=str)
     parser.add_argument("--image", action="store_true", help="")
     parser.add_argument("--video", action="store_true", help="")
-
     parser.add_argument("--saveOutput", action="store_true", help="")
     parser.add_argument("--dir", type=str, default="", help="")
     parser.add_argument("--display", action="store_true", help="")
     parser.add_argument("--outputDirectory", type=str, default="", help="")
     parser.add_argument("--frame_limit", type=int, default="1000000", help="")
+    parser.add_argument("--rescale", action="store_true", help="")
+    parser.add_argument("--rescale_ratio", type=float, help="")
+
 
     FLAGS, unparsed = parser.parse_known_args()
     main(FLAGS)
