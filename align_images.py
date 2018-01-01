@@ -90,14 +90,14 @@ def main(args):
 
     output_file = input_dir / args.output_file
 
-    input_files = list(input_dir.glob("*." + args.file_type))
+    input_files = list(input_dir.glob("*"))
     assert len(input_files) > 0, "Can't find input files"
 
     def iter_face_alignments():
         for fn in tqdm(input_files):
             image = cv2.imread(str(fn))
             if image is None:
-                tqdm.write("Can't read image file: ", fn)
+                tqdm.write("Can't read image file")
                 continue
 
             cropped_faces = get_cropped_faces(image)
