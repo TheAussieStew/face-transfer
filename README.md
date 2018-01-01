@@ -85,3 +85,6 @@ python process.py old ryan_gosling --video --saveOutput --frame_limit 30 --dir t
 ## Common Issues
 Issue: I'm having issues with dlib  
 Solution: Compile and install dlib from source
+
+## Acknowledgements
+Code borrows from https://github.com/deepfakes/faceswap
