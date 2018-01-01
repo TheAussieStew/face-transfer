@@ -79,7 +79,7 @@ The default batch size of 64 should take about 1 second to process on a Tesla K8
 ### Processing video
 Run the following to process and output a video:
 ```
-python process.py old ryan_gosling --video --saveOutput --frame_limit 30 --dir test/input/videos/conway_video.mov --outputDirectory test/output/videos/
+python process.py old ryan_gosling --video --saveOutput --frame_limit 30 --rescale --rescale_ratio 0.5 --dir test/input/videos/conway_video.mov --outputDirectory test/output/videos/
 ```
 
 ## Common Issues
