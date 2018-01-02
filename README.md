@@ -27,6 +27,7 @@ To create the required directories, run the following in your terminal:
 ```
 python init.py
 ```
+## Running the project
 ### 1. Gathering/Creating Raw Data
 Create a folder in data/raw_data/ and fill it with images of the person whose face you want to transfer. This is the required directory structure:  
 
@@ -63,9 +64,9 @@ The resulting training data is placed in data/training_data/firstname_lastname. 
 
 |--- data  
 |---|-- raw_data  
-|---|---|-- barack_obama  
+|---|---|-- ryan_gosling  
 |---|-- training_data  
-|---|---|-- barack_obama  
+|---|---|-- ryan_gosling  
 
 ### 3. Training models
 Run the following to train 2 encoder:decoder pairs (autoencoders):
