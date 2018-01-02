@@ -30,14 +30,14 @@ def process_video(video_file, FLAGS):
 
     print("Testing on", base, "   FPS = ", fps)
 
-    if FLAGS.rescale:
+    if FLAGS.rescale_ratio:
         height = int(height * FLAGS.rescale_ratio)
         width = int(width * FLAGS.rescale_ratio)
 
-    if FLAGS.saveOutput and is_opened:
+    if FLAGS.save and is_opened:
         fourcc = cv2.VideoWriter_fourcc(*"XVID")
-        out_video = cv2.VideoWriter(FLAGS.outputDirectory + filename +
-                                   "_output.avi", fourcc, processing_fps, (width, height))
+        out_video = cv2.VideoWriter(FLAGS.output_dir + filename +
+                                    "_output.avi", fourcc, processing_fps, (width, height))
 
     autoencoder = load_autoencoder(FLAGS.encoder, FLAGS.decoder)
 
@@ -54,7 +54,7 @@ def process_video(video_file, FLAGS):
             break
 
         # rescale frame
-        if FLAGS.rescale:
+        if FLAGS.rescale_ratio:
             height, width, layers = frame.shape
             height = int(height * FLAGS.rescale_ratio)
             width = int(width * FLAGS.rescale_ratio)
@@ -77,7 +77,7 @@ def process_video(video_file, FLAGS):
             cv2.imshow("new_image", new_image)
             cv2.waitKey(1)
 
-        if FLAGS.saveOutput:
+        if FLAGS.save:
             out_video.write(new_image)
 
         progress_bar.update(1)
@@ -87,7 +87,7 @@ def process_video(video_file, FLAGS):
     video_capture.release()
     cv2.destroyAllWindows()
 
-    if FLAGS.saveOutput:
+    if FLAGS.save:
         out_video.release()
 
 
@@ -120,7 +120,7 @@ def process_video(video_file, FLAGS):
 #         face = img[top:bottom, left:right]
 #         # resize to CROP_SIZE whixh is 256 by 256
 #         face = cv2.resize(face, CROP_SIZE)
-#         cv2.imwrite(FLAGS.outputDirectory + filename + "_output.png", face)
+#         cv2.imwrite(FLAGS.output_dir + filename + "_output.png", face)
 
 
 def main(FLAGS):
@@ -128,32 +128,30 @@ def main(FLAGS):
 
     # Image processing incomplete for now
     # if FLAGS.image:
-    #     files = glob.glob(os.path.join(FLAGS.dir, "*.*"))
+    #     files = glob.glob(os.path.join(FLAGS.input_dir, "*.*"))
     #     if files == []:
     #         print("No files found in folder: " + FLAGS.folder)
     #         exit(1)
     #     for imFile in files:
     #         processImage(imFile, FLAGS)
     if FLAGS.video:
-        process_video(FLAGS.dir, FLAGS)
+        process_video(FLAGS.input_dir, FLAGS)
 
     print("Total processing time = ", int(time.time() - t0), "secs")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("encoder", type=str)
-    parser.add_argument("decoder", type=str)
-    parser.add_argument("--image", action="store_true", help="")
-    parser.add_argument("--video", action="store_true", help="")
-    parser.add_argument("--saveOutput", action="store_true", help="")
-    parser.add_argument("--dir", type=str, default="", help="")
-    parser.add_argument("--display", action="store_true", help="")
-    parser.add_argument("--outputDirectory", type=str, default="", help="")
-    parser.add_argument("--frame_limit", type=int, default="1000000", help="")
-    parser.add_argument("--rescale", action="store_true", help="")
-    parser.add_argument("--rescale_ratio", type=float, help="")
-
+    parser.add_argument("encoder", type=str, help="The name of the encoder weights file. For example, to load 'encoder_old.h5', you enter 'old' as your argument.")
+    parser.add_argument("decoder", type=str, help="The name of the decoder weights file. For example, to load 'decoder_donald_trump.h5', you enter 'donald_trump' as your argument.")
+    parser.add_argument("input_dir", type=str, default="", help="The path of the input file")
+    parser.add_argument("--image", action="store_true", help="Process an image.")
+    parser.add_argument("--video", action="store_true", help="Process a video.")
+    parser.add_argument("--save", action="store_true", help="Save the output.")
+    parser.add_argument("--display", action="store_true", help="Show a preview while processing the video.")
+    parser.add_argument("--output_dir", type=str, default="", help="The path the output is placed in.")
+    parser.add_argument("--frame_limit", type=int, default="1000000", help="The maximum number of frames to be processed.")
+    parser.add_argument("--rescale_ratio", type=float, help="Rescale the video resolution.")
 
     FLAGS, unparsed = parser.parse_known_args()
     main(FLAGS)
