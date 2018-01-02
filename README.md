@@ -27,7 +27,7 @@ To create the required directories, run the following in your terminal:
 ```
 python init.py
 ```
-## Running the project
+## Running The Project
 ### 1. Gathering/Creating Raw Data
 Create a folder in data/raw_data/ and fill it with images of the person whose face you want to transfer. This is the required directory structure:  
 
@@ -80,7 +80,7 @@ The default batch size of 64 should take about 1 second to process on a Tesla K8
 ### 4. Processing video
 Run the following to process and output a video:
 ```
-python process.py old ryan_gosling test/input/videos/conway_video.mov --video --saveOutput --frame_limit 30 --rescale_ratio 0.5 --outputDirectory test/output/videos/
+python process.py old ryan_gosling test/input/videos/example_video.mov --video --save --frame_limit 30 --rescale_ratio 0.5 --output_dir test/output/videos/
 ```
 
 ## Common Issues
