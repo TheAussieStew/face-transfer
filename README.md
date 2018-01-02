@@ -27,7 +27,7 @@ To create the required directories, run the following in your terminal:
 ```
 python init.py
 ```
-### Gathering/Creating Raw Data
+### 1. Gathering/Creating Raw Data
 Create a folder in data/raw_data/ and fill it with images of the person whose face you want to transfer. This is the required directory structure:  
 
 |--- data  
@@ -53,7 +53,7 @@ ffmpeg -i ryan_gosling.webm -ss 00:00:47 -t 00:00:15 -q:v 1 -vf fps=0.5 rg%d.jpe
 
 You should now go through all your images and delete images without a face in them. The script skips images without faces in them, but each image takes a while to scan so it's best if we take out images without a face in them. If there are multiple faces in an image, that's fine - we'll deal with that after we've created our training data.
 
-### Creating Training Data
+### 2. Creating Training Data
 
 Run the following to crop and align the raw data. 
 ```
@@ -67,7 +67,7 @@ The resulting training data is placed in data/training_data/firstname_lastname. 
 |---|-- training_data  
 |---|---|-- barack_obama  
 
-### Training models
+### 3. Training models
 Run the following to train 2 encoder:decoder pairs (autoencoders):
 encoder_new.h5:decoder_ryan_gosling.h5
 encoder_new.h5:decoder_daisy_ridley.h5
@@ -76,7 +76,7 @@ python train.py new ryan_gosling daisy_ridley
 ```
 The default batch size of 64 should take about 1 second to process on a Tesla K80.
 
-### Processing video
+### 4. Processing video
 Run the following to process and output a video:
 ```
 python process.py old ryan_gosling test/input/videos/conway_video.mov --video --saveOutput --frame_limit 30 --rescale_ratio 0.5 --outputDirectory test/output/videos/
