@@ -23,9 +23,9 @@ def monkey_patch_face_detector(_):
     return detect
 
 
-dlib.cnn_face_detection_model_v1 = monkey_patch_face_detector
+#dlib.cnn_face_detection_model_v1 = monkey_patch_face_detector
 FACE_ALIGNMENT = FaceAlignment(
-    LandmarksType._2D, enable_cuda=False, flip_input=False)
+    LandmarksType._2D, enable_cuda=True, flip_input=False, use_cnn_face_detector=True)
 
 mean_face_x = numpy.array([
     0.000213256, 0.0752622, 0.18113, 0.29077, 0.393397, 0.586856, 0.689483, 0.799124,
