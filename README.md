@@ -73,7 +73,7 @@ Run the following to train 2 encoder:decoder pairs (autoencoders):
 encoder_new.h5:decoder_ryan_gosling.h5
 encoder_new.h5:decoder_daisy_ridley.h5
 ```
-python train.py new ryan_gosling daisy_ridley
+python train.py new ryan_gosling daisy_ridley --preview
 ```
 The default batch size of 64 should take about 1 second to process on a Tesla K80.
 
