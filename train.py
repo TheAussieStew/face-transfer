@@ -57,7 +57,7 @@ def main(FLAGS):
 
     progress_bar = tqdm(total=FLAGS.max_iters, desc="")
     for iteration in range(FLAGS.max_iters):
-        batch_size = 64
+        batch_size = 128
         warped_A, target_A = get_training_data(images_A, batch_size)
         warped_B, target_B = get_training_data(images_B, batch_size)
 
