@@ -23,9 +23,14 @@ def monkey_patch_face_detector(_):
     return detect
 
 
+# This forces the frontal face detector to be used, regardless of whether cuda is enabled later
+# The frontal face detector is less accurate, slower by about ~12% but detects slightly smaller faces
+# than the cnn model
 #dlib.cnn_face_detection_model_v1 = monkey_patch_face_detector
+
+# Uses the cnn face detection model if cuda is enabled, else uses frontal face detector
 FACE_ALIGNMENT = FaceAlignment(
-    LandmarksType._2D, enable_cuda=True, flip_input=False, use_cnn_face_detector=True)
+    LandmarksType._2D, enable_cuda=True, flip_input=False)
 
 mean_face_x = numpy.array([
     0.000213256, 0.0752622, 0.18113, 0.29077, 0.393397, 0.586856, 0.689483, 0.799124,
