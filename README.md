@@ -11,7 +11,7 @@
     boost-python
     dlib (You should install dlib using the link below, unless you want to suffer the pain of endless configuration issues) 
     https://gist.github.com/ageitgey/629d75c1baac34dfa5ca2a1928a7aeaf
-    CUDA Toolkit 8.0 and cuDNN v5.1 (Requires a CUDA GPU)
+    CUDA Toolkit 8.0 and cuDNN v6.0 (Requires a CUDA GPU)
 ```
 ## Installation
 This will install required packages and dependencies using conda.
