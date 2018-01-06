@@ -184,10 +184,10 @@ class FaceAlignment:
                     inp = inp.cuda()
 
                 out = self.face_alignemnt_net(
-                    Variable(inp, volatile=True))[-1].data.cpu()
+                    Variable(inp, requires_grad=False))[-1].data.cpu()
                 if self.flip_input:
                     out += flip(self.face_alignemnt_net(Variable(flip(inp),
-                                                                 volatile=True))[-1].data.cpu(), is_label=True)
+                                                                 requires_grad=False))[-1].data.cpu(), is_label=True)
 
                 pts, pts_img = get_preds_fromhm(out, center, scale)
                 pts, pts_img = pts.view(68, 2) * 4, pts_img.view(68, 2)
@@ -204,7 +204,7 @@ class FaceAlignment:
                     depth_pred = self.depth_prediciton_net(
                         Variable(
                             torch.cat(
-                                (inp, heatmaps), 1), volatile=True)).data.cpu().view(
+                                (inp, heatmaps), 1), requires_grad=False)).data.cpu().view(
                         68, 1)
                     pts_img = torch.cat(
                         (pts_img, depth_pred * (1.0 / (256.0 / (200.0 * scale)))), 1)

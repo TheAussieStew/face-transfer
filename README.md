@@ -6,7 +6,7 @@
     Python 3
     OpenCV 3
     Tensorflow 1.3
-    Keras 2
+    Keras 2.0
     boost
     boost-python
     dlib (You should install dlib using the link below, unless you want to suffer the pain of endless configuration issues) 
