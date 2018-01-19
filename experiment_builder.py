@@ -95,14 +95,14 @@ def run_experiment(data, batch_size, num_gpus, continue_from_epoch, experiment_n
                                  training_phase=training_phase, data=data, samples_filepath=samples_filepath,
                                  logs_path=logs_path, experiment_name=experiment_name, e=e,
                                  x_input_A=x_train_A_stationary, augment_data=augment_data,
-                                 x_input_B=x_train_B_stationary, save_to_gdrive=True)
+                                 x_input_B=x_train_B_stationary)
 
                 sample_generator(phase="val", sess=sess, sample_images=sample_images, input_A=input_A, input_B=input_B,
                                  dropout_rate=dropout_rate, dropout_rate_value=dropout_rate_value,
                                  training_phase=training_phase, data=data, samples_filepath=samples_filepath,
                                  logs_path=logs_path, experiment_name=experiment_name, e=e,
                                  x_input_A=x_val_A_stationary, augment_data=augment_data,
-                                 x_input_B=x_val_B_stationary, save_to_gdrive=True)
+                                 x_input_B=x_val_B_stationary)
 
                 with tqdm.tqdm(total=total_train_batches) as pbar:
                     for i in range(total_train_batches):
@@ -194,8 +194,6 @@ def run_experiment(data, batch_size, num_gpus, continue_from_epoch, experiment_n
                                         total_val_autoencoder_loss_A_A,
                                         total_val_autoencoder_loss_B_B])
 
-                    store_util.save_item_to_gdrive_folder(
-                        file_to_save_path=summary_filepath, gdrive_folder="{}_{}".format(experiment_name, "logs"))
 
                     if best_train_loss >= total_train_autoencoder_loss_A_A + total_train_autoencoder_loss_B_B:
                         best_train_loss = total_train_autoencoder_loss_A_A + total_train_autoencoder_loss_B_B

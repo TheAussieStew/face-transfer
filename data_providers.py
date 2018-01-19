@@ -76,11 +76,11 @@ class FaceDataset(object):
         train_A_index = int(self.x_A.shape[0] * 0.95)
         train_B_index = int(self.x_B.shape[0] * 0.95)
 
-        # if self.x_A.shape[0]-train_A_index < batch_size:
-        #     train_A_index = self.x_A.shape[0]-batch_size
-        #
-        # if self.x_B.shape[0]-train_B_index < batch_size:
-        #     train_A_index = self.x_A.shape[0]-batch_size
+        if self.x_A.shape[0]-train_A_index < batch_size:
+            train_A_index = self.x_A.shape[0]-batch_size
+
+        if self.x_B.shape[0]-train_B_index < batch_size:
+            train_B_index = self.x_B.shape[0]-batch_size
 
 
         print(self.x_A.shape, self.x_B.shape, train_ratio, train_A_index, train_B_index)
@@ -230,14 +230,16 @@ class FaceDataset(object):
 
         return x_val_A, x_val_A, x_val_B, x_val_B
 
-class EmmaWatsonToDaisyRidleyDataset(FaceDataset):
-    def __init__(self, batch_size, train_ratio=0.88, num_gpus=1):
-        super(EmmaWatsonToDaisyRidleyDataset, self).__init__(batch_size, train_ratio, num_gpus)
+class AToBDataset(FaceDataset):
+    def __init__(self, batch_size, path_images_A, path_images_B, train_ratio=0.88, num_gpus=1):
+        self.path_images_A = path_images_A
+        self.path_images_B = path_images_B
+        super(AToBDataset, self).__init__(batch_size, train_ratio, num_gpus)
+
 
     def load_dataset(self):
-        training_data_dir = Path("images")
-        person_A_training_data = training_data_dir / Path("daisy_ridley")
-        person_B_training_data = training_data_dir / Path("ryan_gosling")
+        person_A_training_data = self.path_images_A#training_data_dir / Path("daisy_ridley")
+        person_B_training_data = self.path_images_B#training_data_dir / Path("ryan_gosling")
         images_A = get_image_paths(str(person_A_training_data))
         images_B = get_image_paths(str(person_B_training_data))
         images_A = load_images(images_A)
